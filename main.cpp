@@ -72,6 +72,11 @@
 #include "Api/VodApi.h"
 #endif
 
+#ifdef ENABLE_AI
+#include "AI/AIManager.h"
+#include "Api/AIApi.h"
+#endif
+
 #include "Codec/AacTrack.h"
 #include "Codec/AV1Track.h"
 #include "Codec/Mp3Track.h"
@@ -115,7 +120,7 @@ void setFileLimits()
 
     if (getrlimit(RLIMIT_NOFILE, &limitOld)==0) {
         limitNew.rlim_cur = limitNew.rlim_max = RLIM_INFINITY;
-        
+
         if (setrlimit(RLIMIT_NOFILE, &limitNew)!=0) {
             limitNew.rlim_cur = limitNew.rlim_max = limitOld.rlim_max;
             setrlimit(RLIMIT_NOFILE, &limitNew);
@@ -254,6 +259,9 @@ int main(int argc, char** argv)
 #ifdef ENABLE_SRT
     SrtApi::initApi();
 #endif
+#ifdef ENABLE_AI
+    AIApi::initApi();
+#endif
     VodApi::initApi();
 #endif
 
@@ -280,6 +288,16 @@ int main(int argc, char** argv)
 
     Heartbeat::Ptr beat = make_shared<Heartbeat>();
     beat->startAsync();
+
+#ifdef ENABLE_AI
+    // Initialize AI Manager
+    if (AI::AIManager::instance()->init()) {
+        AI::AIManager::instance()->start();
+        logInfo << "AI Manager initialized and started successfully";
+    } else {
+        logError << "Failed to initialize AI Manager";
+    }
+#endif
 
 #ifdef ENABLE_RTSP
     // 开启RTSP SERVER
@@ -361,7 +379,7 @@ int main(int argc, char** argv)
         // }
     }
 #endif
-    
+
 #if defined(ENABLE_GB28181) || defined(ENABLE_EHOME2) || defined(ENABLE_EHOME5) || defined(ENABLE_RTSP) || defined(ENABLE_WEBRTC) || defined(ENABLE_RTP)
     auto rtpConfigVec = configJson["Rtp"]["Server"];
     for (auto server : rtpConfigVec.items()) {
@@ -523,7 +541,7 @@ int main(int argc, char** argv)
             HttpServer::instance()->start(ip, sslPort, count, true);
         }
     }
-    
+
     auto httpServerConfigVec = configJson["Http"]["Server"];
     for (auto server : httpServerConfigVec.items()) {
         string serverId = server.key();
@@ -606,11 +624,11 @@ int main(int argc, char** argv)
 
     // auto loop = EventLoopPool::instance()->getLoopByCircle();
     // TcpClient::Ptr client = make_shared<TcpClient>(loop);
-    // loop->async([client]() { 
+    // loop->async([client]() {
     //     client->create("");
     //     client->connect("127.0.0.1", 9000);
     // }, true);
-    
+
     while (true) {
         // TODO 可做一些巡检工作
         EventLoopPool::instance()->for_each_loop([](const EventLoop::Ptr &loop){

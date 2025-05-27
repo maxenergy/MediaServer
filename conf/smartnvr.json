@@ -1,0 +1,161 @@
+{
+    "SmartNVR": {
+        "enabled": true,
+        "version": "1.0.0",
+        "AI": {
+            "enabled": true,
+            "detection_interval_ms": 1000,
+            "confidence_threshold": 0.5,
+            "gpu_enabled": false,
+            "num_threads": 2,
+            "models": {
+                "object_detection": {
+                    "enabled": true,
+                    "model_path": "models/yolov8n.onnx",
+                    "confidence_threshold": 0.5,
+                    "nms_threshold": 0.4,
+                    "target_classes": ["person", "car", "truck", "bus", "motorcycle", "bicycle"]
+                },
+                "face_recognition": {
+                    "enabled": true,
+                    "detection_model": "models/retinaface.onnx",
+                    "recognition_model": "models/arcface.onnx",
+                    "detection_threshold": 0.7,
+                    "recognition_threshold": 0.6
+                },
+                "plate_recognition": {
+                    "enabled": true,
+                    "detection_model": "models/plate_detect.onnx",
+                    "recognition_model": "models/plate_ocr.onnx",
+                    "detection_threshold": 0.5
+                }
+            }
+        },
+        "Recording": {
+            "event_based": true,
+            "continuous": false,
+            "pre_record_seconds": 10,
+            "post_record_seconds": 30,
+            "max_file_size_mb": 1024,
+            "retention_days": 30,
+            "storage_path": "./recordings/",
+            "formats": ["mp4", "ps"],
+            "quality": {
+                "video_bitrate": 2000000,
+                "audio_bitrate": 128000,
+                "fps": 25,
+                "resolution": "1920x1080"
+            }
+        },
+        "Events": {
+            "enabled": true,
+            "motion_detection": {
+                "enabled": true,
+                "sensitivity": 0.3,
+                "min_area": 1000
+            },
+            "object_detection": {
+                "enabled": true,
+                "target_objects": ["person", "car", "truck"],
+                "min_confidence": 0.6
+            },
+            "face_recognition": {
+                "enabled": true,
+                "unknown_face_alert": true,
+                "known_face_log": true
+            },
+            "plate_recognition": {
+                "enabled": true,
+                "whitelist_enabled": false,
+                "blacklist_enabled": true,
+                "whitelist": [],
+                "blacklist": []
+            },
+            "intrusion_detection": {
+                "enabled": true,
+                "zones": []
+            },
+            "line_crossing": {
+                "enabled": false,
+                "lines": []
+            },
+            "loitering_detection": {
+                "enabled": false,
+                "timeout_seconds": 300
+            }
+        },
+        "Alerts": {
+            "enabled": true,
+            "webhook": {
+                "enabled": false,
+                "url": "http://localhost:8080/alerts",
+                "timeout_ms": 5000,
+                "retry_count": 3
+            },
+            "email": {
+                "enabled": false,
+                "smtp_server": "smtp.gmail.com",
+                "smtp_port": 587,
+                "username": "",
+                "password": "",
+                "from": "",
+                "to": []
+            },
+            "push_notification": {
+                "enabled": false,
+                "service": "fcm",
+                "api_key": "",
+                "device_tokens": []
+            }
+        },
+        "Cameras": {
+            "auto_discovery": true,
+            "discovery_interval_seconds": 300,
+            "max_cameras": 64,
+            "default_settings": {
+                "resolution": "1920x1080",
+                "fps": 25,
+                "bitrate": 2000000,
+                "ai_enabled": true,
+                "recording_enabled": true
+            },
+            "onvif": {
+                "enabled": true,
+                "username": "admin",
+                "password": "admin123",
+                "port_range": {
+                    "start": 80,
+                    "end": 8080
+                }
+            }
+        },
+        "Database": {
+            "type": "sqlite",
+            "path": "./smartnvr.db",
+            "backup_enabled": true,
+            "backup_interval_hours": 24,
+            "cleanup_enabled": true,
+            "cleanup_days": 90
+        },
+        "WebInterface": {
+            "enabled": true,
+            "live_view": {
+                "max_concurrent_streams": 16,
+                "quality": "medium",
+                "latency": "low"
+            },
+            "playback": {
+                "seek_enabled": true,
+                "download_enabled": true,
+                "export_formats": ["mp4", "avi"]
+            }
+        },
+        "Performance": {
+            "max_cpu_usage": 80,
+            "max_memory_usage": 70,
+            "frame_skip_enabled": true,
+            "adaptive_quality": true,
+            "load_balancing": true
+        }
+    }
+}

@@ -9,7 +9,7 @@ message(STATUS "add common moudle")
 project(common)
 aux_source_directory("Common" SRC_COMMON)
 aux_source_directory("Codec" SRC_COMMON)
-add_library(common STATIC 
+add_library(common STATIC
     ${SRC_COMMON}
 )
 list(INSERT LINK_LIB_LIST 0 common)
@@ -20,7 +20,7 @@ if (ENABLE_MPEG OR ENABLE_RTSP)
     project(mpeg)
     add_definitions(-DENABLE_MPEG)
     aux_source_directory("Mpeg" SRC_MPEG)
-    add_library(mpeg STATIC 
+    add_library(mpeg STATIC
         ${SRC_MPEG}
     )
     list(INSERT LINK_LIB_LIST 0 mpeg)
@@ -36,7 +36,7 @@ if (ENABLE_RTSP OR ENABLE_RTP OR ENABLE_WEBRTC OR ENABLE_GB28181 OR ENABLE_EHOME
     aux_source_directory("Rtp" SRC_RTP)
     aux_source_directory("Rtp/Decoder" SRC_RTP)
     aux_source_directory("Rtp/Encoder" SRC_RTP)
-    add_library(rtp STATIC 
+    add_library(rtp STATIC
         ${SRC_RTP}
     )
     list(INSERT LINK_LIB_LIST 0 rtp)
@@ -50,7 +50,7 @@ if (ENABLE_MP4)
     project(mp4)
     add_definitions(-DENABLE_MP4)
     aux_source_directory("Mp4" SRC_MP4)
-    add_library(mp4 STATIC 
+    add_library(mp4 STATIC
         ${SRC_MP4}
     )
     list(INSERT LINK_LIB_LIST 0 mp4)
@@ -64,7 +64,7 @@ if (ENABLE_GB28181)
     project(gb28181)
     add_definitions(-DENABLE_GB28181)
     aux_source_directory("GB28181" SRC_GB28181)
-    add_library(gb28181 STATIC 
+    add_library(gb28181 STATIC
         ${SRC_GB28181}
     )
     list(INSERT LINK_LIB_LIST 0 gb28181)
@@ -80,7 +80,7 @@ if (ENABLE_RTMP)
     aux_source_directory("Rtmp" SRC_RTMP)
     aux_source_directory("Rtmp/Decode" SRC_RTMP)
     aux_source_directory("Rtmp/Encode" SRC_RTMP)
-    add_library(rtmp STATIC 
+    add_library(rtmp STATIC
         ${SRC_RTMP}
     )
     list(INSERT LINK_LIB_LIST 0 rtmp)
@@ -94,7 +94,7 @@ if (ENABLE_RTSP)
     project(rtsp)
     add_definitions(-DENABLE_RTSP)
     aux_source_directory("Rtsp" SRC_RTSP)
-    add_library(rtsp STATIC 
+    add_library(rtsp STATIC
         ${SRC_RTSP}
     )
     list(INSERT LINK_LIB_LIST 0 rtsp)
@@ -108,7 +108,7 @@ if (ENABLE_HLS)
     project(hls)
     add_definitions(-DENABLE_HLS)
     aux_source_directory("Hls" SRC_Hls)
-    add_library(hls STATIC 
+    add_library(hls STATIC
         ${SRC_Hls}
     )
     list(INSERT LINK_LIB_LIST 0 hls)
@@ -122,7 +122,7 @@ if (ENABLE_HOOK)
     project(hook)
     add_definitions(-DENABLE_HOOK)
     aux_source_directory("Hook" SRC_HOOK)
-    add_library(hook STATIC 
+    add_library(hook STATIC
         ${SRC_HOOK}
     )
     list(INSERT LINK_LIB_LIST 0 hook)
@@ -136,7 +136,7 @@ if (ENABLE_RTSP OR ENABLE_GB28181 OR ENABLE_WEBRTC)
     project(rtcp)
     add_definitions(-DENABLE_RTCP)
     aux_source_directory("Rtcp" SRC_RTCP)
-    add_library(rtcp STATIC 
+    add_library(rtcp STATIC
         ${SRC_RTCP}
     )
     list(INSERT LINK_LIB_LIST 0 rtcp)
@@ -150,7 +150,7 @@ if (ENABLE_EHOME2)
     project(ehome2)
     add_definitions(-DENABLE_EHOME2)
     aux_source_directory("Ehome2" SRC_Ehome2)
-    add_library(ehome2 STATIC 
+    add_library(ehome2 STATIC
         ${SRC_Ehome2}
     )
     list(INSERT LINK_LIB_LIST 0 ehome2)
@@ -164,7 +164,7 @@ if (ENABLE_EHOME5)
     project(ehome5)
     add_definitions(-DENABLE_EHOME5)
     aux_source_directory("Ehome5" SRC_Ehome5)
-    add_library(ehome5 STATIC 
+    add_library(ehome5 STATIC
         ${SRC_Ehome5}
     )
     list(INSERT LINK_LIB_LIST 0 ehome5)
@@ -179,7 +179,7 @@ if (ENABLE_JT1078)
     add_definitions(-DENABLE_JT1078)
     aux_source_directory("JT1078" SRC_JT1078)
     aux_source_directory("PcmTranscode" SRC_JT1078)
-    add_library(jt1078 STATIC 
+    add_library(jt1078 STATIC
         ${SRC_JT1078}
     )
     list(INSERT LINK_LIB_LIST 0 jt1078)
@@ -193,7 +193,7 @@ if (ENABLE_FLV)
     project(flv)
     add_definitions(-DENABLE_FLV)
     aux_source_directory("Flv" SRC_Flv)
-    add_library(flv STATIC 
+    add_library(flv STATIC
         ${SRC_Flv}
     )
     list(INSERT LINK_LIB_LIST 0 flv)
@@ -207,7 +207,7 @@ if (ENABLE_SRT)
     project(srtapp)
     add_definitions(-DENABLE_SRT)
     aux_source_directory("Srt" SRC_Srt)
-    add_library(srtapp STATIC 
+    add_library(srtapp STATIC
         ${SRC_Srt}
     )
     list(INSERT LINK_LIB_LIST 0 srtapp)
@@ -222,7 +222,7 @@ if (ENABLE_RECORD)
     project(record)
     add_definitions(-DENABLE_RECORD)
     aux_source_directory("Record" SRC_Record)
-    add_library(record STATIC 
+    add_library(record STATIC
         ${SRC_Record}
     )
     list(INSERT LINK_LIB_LIST 0 record)
@@ -236,7 +236,7 @@ if (ENABLE_FFMPEG)
     project(ffmpeg)
     add_definitions(-DENABLE_FFMPEG)
     aux_source_directory("Ffmpeg" SRC_Ffmpeg)
-    add_library(ffmpeg STATIC 
+    add_library(ffmpeg STATIC
         ${SRC_Ffmpeg}
     )
     list(INSERT LINK_LIB_LIST 0 ffmpeg)
@@ -251,7 +251,7 @@ if (ENABLE_HTTP OR ENABLE_API OR ENABLE_HLS)
     add_definitions(-DENABLE_HTTP)
     aux_source_directory("Http" SRC_HTTP)
     aux_source_directory("HttpStream" SRC_HTTP)
-    add_library(http STATIC 
+    add_library(http STATIC
         ${SRC_HTTP}
     )
     list(INSERT LINK_LIB_LIST 0 http)
@@ -264,7 +264,7 @@ if (ENABLE_API)
     message(STATUS "add api moudle")
     project(api)
     aux_source_directory("Api" SRC_API)
-    add_library(api STATIC 
+    add_library(api STATIC
         ${SRC_API}
     )
     list(INSERT LINK_LIB_LIST 0 api)
@@ -282,13 +282,27 @@ else()
     message(STATUS "not add api moudle")
 endif ()
 
+###AI########
+if (ENABLE_AI)
+    message(STATUS "add ai moudle")
+    project(ai)
+    add_definitions(-DENABLE_AI)
+    aux_source_directory("AI" SRC_AI)
+    add_library(ai STATIC
+        ${SRC_AI}
+    )
+    list(INSERT LINK_LIB_LIST 0 ai)
+else()
+    message(STATUS "not add ai moudle")
+endif ()
+
 ###Webrtc########
 if (ENABLE_WEBRTC)
     message(STATUS "add webrtc moudle")
     project(webrtc)
     add_definitions(-DENABLE_WEBRTC)
     aux_source_directory("Webrtc" SRC_Webrtc)
-    add_library(webrtc STATIC 
+    add_library(webrtc STATIC
         ${SRC_Webrtc}
     )
     list(INSERT LINK_LIB_LIST 0 webrtc)

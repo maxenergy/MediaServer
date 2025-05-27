@@ -33,10 +33,11 @@ option(ENABLE_MP4 "Enable mp4" true)
 option(ENABLE_FLV "Enable flv" true)
 option(ENABLE_EHOME2 "Enable ehome2 and rtp and mpeg" true)
 option(ENABLE_EHOME5 "Enable ehome5 and rtp and mpeg" true)
+option(ENABLE_AI "Enable AI detection (OpenCV, ONNX)" false)
 
 #设置调试信息并开启c++11标准
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
-SET(CMAKE_EXE_LINKER_FLAGS " -no-pie") 
+SET(CMAKE_EXE_LINKER_FLAGS " -no-pie")
 #set(BUILD_SHARED_LIBS OFF)  # 确保静态链接
 #set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc")
 
@@ -100,7 +101,7 @@ if (ENABLE_WEBRTC)
     # 定义要链接的srt库
     link_directories(${SCTP_LIBRARY})
     list(APPEND LINK_LIB_LIST usrsctp)
-    
+
     add_definitions(-DENABLE_WEBRTC)
     set(ENABLE_RTP true CACHE BOOL "Enable rtp and mpeg" FORCE)
     set(ENABLE_RTCP true CACHE BOOL "Enable rtcp" FORCE)
@@ -213,6 +214,37 @@ if (ENABLE_OPENSSL)
     list(APPEND LINK_LIB_LIST ssl crypto)
 else()
     message(STATUS "未开启openssl")
+endif ()
+
+###AI Detection########
+if (ENABLE_AI)
+    message(STATUS "开启AI检测")
+    add_definitions(-DENABLE_AI)
+
+    # Find OpenCV
+    find_package(OpenCV QUIET)
+    if (OpenCV_FOUND)
+        message(STATUS "Found OpenCV: ${OpenCV_VERSION}")
+        include_directories(${OpenCV_INCLUDE_DIRS})
+        list(APPEND LINK_LIB_LIST ${OpenCV_LIBS})
+    else()
+        message(WARNING "OpenCV not found, AI detection will be disabled")
+        set(ENABLE_AI false CACHE BOOL "Enable AI detection" FORCE)
+    endif()
+
+    # Find ONNX Runtime (we'll install it manually if needed)
+    set(ONNXRUNTIME_INCLUDE_DIR "./Thirdparty/onnxruntime/include")
+    set(ONNXRUNTIME_LIBRARY "./Thirdparty/onnxruntime/lib/")
+    if (EXISTS ${ONNXRUNTIME_INCLUDE_DIR})
+        message(STATUS "Found ONNX Runtime")
+        include_directories(${ONNXRUNTIME_INCLUDE_DIR})
+        link_directories(${ONNXRUNTIME_LIBRARY})
+        list(APPEND LINK_LIB_LIST onnxruntime)
+    else()
+        message(WARNING "ONNX Runtime not found, will use OpenCV DNN instead")
+    endif()
+else()
+    message(STATUS "未开启AI检测")
 endif ()
 
 if (ENABLE_SRT)
