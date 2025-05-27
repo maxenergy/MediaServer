@@ -54,7 +54,11 @@ export const streamAPI = {
   // 获取客户端列表
   getClientList: (params) => api.get('/getClientList', { params }),
   // 关闭客户端
-  closeClient: (data) => api.post('/closeClient', data)
+  closeClient: (data) => api.post('/closeClient', data),
+  // 获取关键帧
+  getKeyframe: (params) => api.get('/streams/keyframe', { params }),
+  // 设置时间戳模式
+  setStampMode: (data) => api.post('/streams/setStampMode', data)
 }
 
 export const serverAPI = {
@@ -82,10 +86,16 @@ export const rtspAPI = {
   // 停止RTSP推流
   stopPublish: (data) => api.post('/rtsp/publish/stop', data),
   // 获取RTSP推流列表
-  getPublishList: () => api.get('/rtsp/publish/list')
+  getPublishList: () => api.get('/rtsp/publish/list'),
+  // 创建RTSP服务器
+  createServer: (data) => api.post('/rtsp/server/create', data),
+  // 停止RTSP服务器
+  stopServer: (data) => api.post('/rtsp/server/stop', data)
 }
 
 export const rtmpAPI = {
+  // 创建RTMP流
+  createStream: (data) => api.post('/rtmp/create', data),
   // 开始RTMP拉流
   startPlay: (data) => api.post('/rtmp/play/start', data),
   // 停止RTMP拉流
@@ -105,6 +115,10 @@ export const webrtcAPI = {
   play: (data) => api.post('/rtc/play', data),
   // WebRTC推流
   publish: (data) => api.post('/rtc/publish', data),
+  // WHEP播放 (WebRTC-HTTP Egress Protocol)
+  whepPlay: (data) => api.post('/rtc/whep', data),
+  // WHIP推流 (WebRTC-HTTP Ingress Protocol)
+  whipPublish: (data) => api.post('/rtc/whip', data),
   // 开始WebRTC拉流
   startPull: (data) => api.post('/rtc/pull/start', data),
   // 停止WebRTC拉流
@@ -182,6 +196,89 @@ export const vodAPI = {
   stop: (data) => api.post('/vod/stop', data),
   // 控制点播
   control: (data) => api.post('/vod/control', data)
+}
+
+// RTP API - 实时传输协议
+export const rtpAPI = {
+  // 创建RTP接收器
+  createReceiver: (data) => api.post('/rtp/recv/create', data),
+  // 创建RTP发送器
+  createSender: (data) => api.post('/rtp/send/create', data),
+  // 启动RTP发送器
+  startSender: (data) => api.post('/rtp/send/start', data),
+  // 停止RTP接收器
+  stopReceiver: (data) => api.post('/rtp/recv/stop', data),
+  // 停止RTP发送器
+  stopSender: (data) => api.post('/rtp/send/stop', data)
+}
+
+// HTTP流媒体API - FLV/HLS/PS VOD
+export const httpStreamAPI = {
+  // FLV播放相关
+  flv: {
+    // 开始FLV播放
+    startPlay: (data) => api.post('/http/flv/play/start', data),
+    // 停止FLV播放
+    stopPlay: (data) => api.post('/http/flv/play/stop', data),
+    // 获取FLV播放列表
+    getPlayList: () => api.get('/http/flv/play/list')
+  },
+  // HLS播放相关
+  hls: {
+    // 开始HLS播放
+    startPlay: (data) => api.post('/http/hls/play/start', data),
+    // 停止HLS播放
+    stopPlay: (data) => api.post('/http/hls/play/stop', data),
+    // 获取HLS播放列表
+    getPlayList: () => api.get('/http/hls/play/list')
+  },
+  // PS VOD播放相关
+  psVod: {
+    // 开始PS VOD播放
+    startPlay: (data) => api.post('/http/ps/vod/play/start', data),
+    // 停止PS VOD播放
+    stopPlay: (data) => api.post('/http/ps/vod/play/stop', data),
+    // 获取PS VOD播放列表
+    getPlayList: () => api.get('/http/ps/vod/play/list')
+  }
+}
+
+// FFmpeg API - 转码任务管理
+export const ffmpegAPI = {
+  // 添加转码任务
+  addTask: (data) => api.post('/ffmpeg/task/add', data),
+  // 删除转码任务
+  deleteTask: (data) => api.post('/ffmpeg/task/del', data),
+  // 重新配置转码任务
+  reconfigTask: (data) => api.post('/ffmpeg/task/reconfig', data)
+}
+
+// Hook API - 事件钩子
+export const hookAPI = {
+  // 流状态变化钩子
+  onStreamStatus: (data) => api.post('/onStreamStatus', data),
+  // 推流鉴权钩子
+  onPublish: (data) => api.post('/onPublish', data),
+  // 播放鉴权钩子
+  onPlay: (data) => api.post('/onPlay', data),
+  // 无播放者钩子
+  onNonePlayer: (data) => api.post('/onNonePlayer', data),
+  // 保活钩子
+  onKeepAlive: (data) => api.post('/onKeepAlive', data)
+}
+
+// Test API - 测试接口
+export const testAPI = {
+  // 添加工作任务
+  addWorkTask: () => api.post('/test/work/task/add'),
+  // 添加有序工作任务
+  addWorkOrderTask: () => api.post('/test/work/ordertask/add')
+}
+
+// Websocket API - WebSocket推流
+export const websocketAPI = {
+  // 开始WebSocket推流
+  startPublish: (data) => api.post('/websocket/publish/start', data)
 }
 
 export default api
