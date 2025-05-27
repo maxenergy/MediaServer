@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard'
+    redirect: '/smartnvr/dashboard'
   },
   {
     path: '/dashboard',
@@ -117,6 +117,49 @@ const routes = [
     name: 'PerformanceMonitor',
     component: () => import('@/views/monitor/PerformanceMonitor.vue'),
     meta: { title: '性能统计' }
+  },
+  // SmartNVR Routes
+  {
+    path: '/smartnvr',
+    name: 'SmartNVR',
+    redirect: '/smartnvr/dashboard',
+    meta: { title: 'SmartNVR' }
+  },
+  {
+    path: '/smartnvr/dashboard',
+    name: 'SmartNVRDashboard',
+    component: () => import('@/views/smartnvr/Dashboard.vue'),
+    meta: { title: 'SmartNVR仪表板' }
+  },
+  {
+    path: '/smartnvr/live',
+    name: 'LiveView',
+    component: () => import('@/views/smartnvr/LiveView.vue'),
+    meta: { title: '实时监控' }
+  },
+  {
+    path: '/smartnvr/ai',
+    name: 'AIManagement',
+    component: () => import('@/views/smartnvr/AIManagement.vue'),
+    meta: { title: 'AI管理' }
+  },
+  {
+    path: '/smartnvr/events',
+    name: 'EventsRecordings',
+    component: () => import('@/views/smartnvr/EventsRecordings.vue'),
+    meta: { title: '事件记录' }
+  },
+  {
+    path: '/smartnvr/faces',
+    name: 'FaceDatabase',
+    component: () => import('@/views/smartnvr/FaceDatabase.vue'),
+    meta: { title: '人脸数据库' }
+  },
+  {
+    path: '/smartnvr/cameras',
+    name: 'CameraManagement',
+    component: () => import('@/views/smartnvr/CameraManagement.vue'),
+    meta: { title: '摄像头管理' }
   }
 ]
 

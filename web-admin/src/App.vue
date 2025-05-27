@@ -4,7 +4,7 @@
       <!-- 侧边栏 -->
       <el-aside width="250px" class="sidebar">
         <div class="logo">
-          <h2>MediaServer</h2>
+          <h2>SmartNVR</h2>
         </div>
         <el-menu
           :default-active="$route.path"
@@ -14,11 +14,28 @@
           text-color="#bfcbd9"
           active-text-color="#409EFF"
         >
-          <el-menu-item index="/dashboard">
+          <el-menu-item index="/smartnvr/dashboard">
             <el-icon><Monitor /></el-icon>
-            <span>仪表盘</span>
+            <span>SmartNVR仪表板</span>
           </el-menu-item>
-          
+
+          <el-sub-menu index="smartnvr">
+            <template #title>
+              <el-icon><VideoCamera /></el-icon>
+              <span>SmartNVR</span>
+            </template>
+            <el-menu-item index="/smartnvr/live">实时监控</el-menu-item>
+            <el-menu-item index="/smartnvr/cameras">摄像头管理</el-menu-item>
+            <el-menu-item index="/smartnvr/ai">AI管理</el-menu-item>
+            <el-menu-item index="/smartnvr/events">事件记录</el-menu-item>
+            <el-menu-item index="/smartnvr/faces">人脸数据库</el-menu-item>
+          </el-sub-menu>
+
+          <el-menu-item index="/dashboard">
+            <el-icon><DataAnalysis /></el-icon>
+            <span>系统仪表板</span>
+          </el-menu-item>
+
           <el-sub-menu index="config">
             <template #title>
               <el-icon><Setting /></el-icon>
