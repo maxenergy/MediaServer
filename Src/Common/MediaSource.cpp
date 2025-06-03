@@ -5,6 +5,7 @@
 
 #include "MediaSource.h"
 #include "EventPoller/SrtEventLoop.h"
+#include "EventPoller/EventLoopPool.h"
 #include "Logger.h"
 #include "Util/String.h"
 #include "Define.h"
@@ -238,6 +239,14 @@ void MediaSource::getOrCreateAsync(const string& uri, const string& vhost, const
                                 return ;
                             }
 
+                            // Check if the pullUrl is a file URI - if so, handle it with loadFromFile
+                            if (startWith(rsp.pullUrl, "/file")) {
+                                logDebug << "Hook returned file URI, loading from file: " << rsp.pullUrl;
+                                loadFromFile(rsp.pullUrl, vhost, protocol, type, cb, create, connKey);
+                                return;
+                            }
+
+                            // For non-file URIs, use MediaClient to pull the stream
                             UrlParser up;
                             up.parse(rsp.pullUrl);
                             auto player = MediaClient::createClient(up.protocol_, uri, MediaClientType_Pull);
@@ -250,10 +259,9 @@ void MediaSource::getOrCreateAsync(const string& uri, const string& vhost, const
                                 const_pointer_cast<MediaClient>(player) = nullptr;
                             });
 
-                            // TODO 
-                            // player->addOnReady(connKey, [uri, vhost, protocol, type, cb, create, connKey](){
-                            //     MediaSource::getOrCreateAsync(uri, vhost, protocol, type, cb, create, connKey);
-                            // });
+                            player->addOnReady(connKey, [uri, vhost, protocol, type, cb, create, connKey](){
+                                MediaSource::getOrCreateAsync(uri, vhost, protocol, type, cb, create, connKey);
+                            });
                         });
 
                         // return ;
@@ -442,7 +450,13 @@ void MediaSource::loadFromFile(const string& uri, const string& vhost, const str
     parser.path_ = uri;// + "-" + randomStr(5) + "-" + to_string(TimeClock::now());
     parser.vhost_ = vhost;
 
-    FrameMediaSource::Ptr frameSource = make_shared<FrameMediaSource>(parser, EventLoop::getCurrentLoop());
+    // 获取EventLoop，如果当前线程没有则从池中获取
+    EventLoop::Ptr eventLoop = EventLoop::getCurrentLoop();
+    if (!eventLoop) {
+        eventLoop = EventLoopPool::instance()->getLoopByCircle();
+    }
+
+    FrameMediaSource::Ptr frameSource = make_shared<FrameMediaSource>(parser, eventLoop);
     _totalSource[parser.path_ + "_" + vhost] = frameSource;
 
     RecordReaderBase::Ptr reader = RecordReaderBase::createRecordReader(uri);
@@ -511,17 +525,20 @@ void MediaSource::loadFromFile(const string& uri, const string& vhost, const str
             }
         }, true);
     });
-    if (!reader->start()) {
-        frameSource->release();
-        frameSource->delConnection(key);
-        cb(nullptr);
-        _totalSource.erase(uri + "_" + vhost);
-        reader->setOnClose(nullptr);
-        return ;
-    }
-    frameSource->_recordReader = reader;
+    // 在EventLoop上下文中启动reader
+    frameSource->getLoop()->async([reader, frameSource, key, cb, uri, vhost, wFrameSrc](){
+        if (!reader->start()) {
+            frameSource->release();
+            frameSource->delConnection(key);
+            cb(nullptr);
+            reader->setOnClose(nullptr);
+            return ;
+        }
+        frameSource->_recordReader = reader;
+    }, true);
 
-    EventLoop::getCurrentLoop()->addTimerTask(5000, [wFrameSrc, cb](){
+    // 使用frameSource的EventLoop来添加定时器任务
+    frameSource->getLoop()->addTimerTask(5000, [wFrameSrc, cb](){
         auto frameSrc = wFrameSrc.lock();
         if (!frameSrc) {
             return 0;

@@ -98,6 +98,7 @@
 #include "Common/Config.h"
 #include "Util/Thread.h"
 #include "Common/Heartbeat.h"
+#include "Common/AutoVideoStreamer.h"
 
 #include <unistd.h>
 #include <string.h>
@@ -604,13 +605,37 @@ int main(int argc, char** argv)
     }
 #endif
 
+    // 初始化并启动自动视频推流功能
+    logInfo << "Initializing AutoVideoStreamer...";
+    auto autoStreamer = AutoVideoStreamer::instance();
+    if (autoStreamer->init()) {
+        if (autoStreamer->start()) {
+            logInfo << "AutoVideoStreamer started successfully";
+
+            // 输出所有创建的推流信息
+            auto streamInfos = autoStreamer->getAllStreamInfo();
+            if (!streamInfos.empty()) {
+                logInfo << "Created " << streamInfos.size() << " video streams:";
+                for (const auto& info : streamInfos) {
+                    logInfo << "  " << info.fileName << " -> " << info.rtspUrl;
+                }
+            } else {
+                logInfo << "No video files found in the configured directory";
+            }
+        } else {
+            logWarn << "Failed to start AutoVideoStreamer";
+        }
+    } else {
+        logInfo << "AutoVideoStreamer is disabled or failed to initialize";
+    }
+
     // auto loop = EventLoopPool::instance()->getLoopByCircle();
     // TcpClient::Ptr client = make_shared<TcpClient>(loop);
-    // loop->async([client]() { 
+    // loop->async([client]() {
     //     client->create("");
     //     client->connect("127.0.0.1", 9000);
     // }, true);
-    
+
     while (true) {
         // TODO 可做一些巡检工作
         EventLoopPool::instance()->for_each_loop([](const EventLoop::Ptr &loop){

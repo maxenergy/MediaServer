@@ -371,6 +371,7 @@ void MediaHook::onStreamNotFound(const OnStreamNotFoundInfo& info,
 
             OnStreamNotFoundResponse resp;
             resp.pullUrl = res.value("pullUrl", "");
+            cb(resp);  // Fix: Call the callback with the response
         });
     }
 }

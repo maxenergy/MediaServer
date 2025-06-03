@@ -440,17 +440,39 @@ int MP4Demuxer::mov_reader_read(void* buffer, size_t bytes)
 
 int MP4Demuxer::mov_reader_read2()
 {
+    logDebug << "MP4Demuxer::mov_reader_read2() called";
+
     mov_track_t* track;
     struct mov_sample_t* sample;
 
     track = mov_reader_next();
-    if (NULL == track || 0 == track->mdhd.timescale)
-    {
+    if (NULL == track) {
+        logDebug << "MP4Demuxer::mov_reader_read2() - mov_reader_next() returned NULL track (EOF)";
         return 0; // EOF
     }
 
-    assert(track->sample_offset < track->sample_count);
+    if (0 == track->mdhd.timescale) {
+        logError << "MP4Demuxer::mov_reader_read2() - track timescale is 0";
+        return 0; // EOF
+    }
+
+    logDebug << "MP4Demuxer::mov_reader_read2() - track ID: " << track->tkhd.track_ID
+             << ", sample_offset: " << track->sample_offset
+             << ", sample_count: " << track->sample_count;
+
+    if (track->sample_offset >= track->sample_count) {
+        logError << "MP4Demuxer::mov_reader_read2() - sample_offset >= sample_count";
+        return 0;
+    }
+
     sample = track->samples[track->sample_offset].get();
+    if (!sample) {
+        logError << "MP4Demuxer::mov_reader_read2() - sample is NULL";
+        return 0;
+    }
+
+    logDebug << "MP4Demuxer::mov_reader_read2() - sample bytes: " << sample->bytes
+             << ", offset: " << sample->offset;
 
     auto frame = make_shared<StreamBuffer>();
     frame->setCapacity(sample->bytes + 1);
@@ -465,7 +487,11 @@ int MP4Demuxer::mov_reader_read2()
 
     track->sample_offset++; //mark as read
     assert(sample->sample_description_index > 0);
+
+    logDebug << "MP4Demuxer::mov_reader_read2() - calling onFrame with track ID: " << track->tkhd.track_ID;
     onFrame(frame, track->tkhd.track_ID, sample->pts * 1000 / track->mdhd.timescale, sample->dts * 1000 / track->mdhd.timescale, sample->flags);
+
+    logDebug << "MP4Demuxer::mov_reader_read2() - completed successfully";
     return 1;
 }
 

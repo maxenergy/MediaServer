@@ -20,9 +20,21 @@ void RecordReaderBase::registerCreateFunc(const function<RecordReaderBase::Ptr(c
 
 RecordReaderBase::Ptr RecordReaderBase::createRecordReader(const string& path)
 {
-    if (_createRecordReader) {
-        return _createRecordReader(path);
+    logDebug << "RecordReaderBase::createRecordReader called with path: " << path;
+
+    if (!_createRecordReader) {
+        logError << "RecordReaderBase::createRecordReader - _createRecordReader function is null! RecordReader::init() may not have been called.";
+        return nullptr;
     }
 
-    return nullptr;
+    logDebug << "RecordReaderBase::createRecordReader - calling registered creation function";
+    auto result = _createRecordReader(path);
+
+    if (result) {
+        logDebug << "RecordReaderBase::createRecordReader - successfully created reader for path: " << path;
+    } else {
+        logError << "RecordReaderBase::createRecordReader - creation function returned nullptr for path: " << path;
+    }
+
+    return result;
 }
